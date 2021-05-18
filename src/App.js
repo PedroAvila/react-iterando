@@ -1,32 +1,50 @@
 
 import React, { Component } from 'react'
 
-const users = [
-  { id:1, name: "Gerardo Gallegos", country: "México" },
-  { id:2, name: "Leanne Graham", country: "USA" },
-  { id:3, name: "Ervin Howell", country: "Colombia" },
-  { id:4, name: "Rodrigo Fernandez", country: "Perú" },
-  { id:5, name: "Alfredo Bauch", country: "Guatemala" },
-  { id:6, name: "Fernanda Valencia", country: "España" }
-]
 
 class App extends Component {
 
+  state = {
+    fruits: [
+      { name: "Fresa", price: 5.4 },
+      { name: "Manzana", price: 2.3 },
+      { name: "Sandia", price: 1.2 },
+      { name: "Guayaba", price: 5 },
+      { name: "Pera", price: 4.12 },
+      { name: "Kiwi", price: 3.87 },
+      { name: "Limon", price: 7.21 },
+      { name: "Melon", price: 6.21 },
+      { name: "Cereza", price: 4.98 }
+    ],
+    frutaSeleccionada: {}
+  }
+
+  select = (frutaSeleccionada, event) => {
+    this.setState({
+      frutaSeleccionada
+    })
+  }
+
   render () {
+
+    const { fruits, frutaSeleccionada } = this.state
     
     return(
-      <div>
-        <h1>Iterando</h1>
-        <ul>
-          { users.map((user) => (
-            <li key={ user.id }>
-              { user.name }
-            </li>
-          )) }
-        </ul>
-      </div>
+      <ul>
+        { fruits.map(fruit=>(
+          <li 
+            key={ fruit.name }
+            onClick={ this.select.bind(this, fruit) }
+            style={{ 
+              color: this.state.frutaSeleccionada.name === fruit.name ? "red" : "#000"
+             }}
+          >
+            { fruit.name } - $ { fruit.price }
+          </li>
+        ))}
+      </ul>
     )
   }
-}
+}  
 
 export default App;
