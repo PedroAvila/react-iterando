@@ -9,11 +9,12 @@ const Unicorn = () => (
 
 class InputNoControlado extends Component {
 
+  nombre = React.createRef()
+  email = React.createRef()
 
-  handleSubmit = (event) => {
-    event.preventDefault()
-    const nombre = event.target[0].value
-    const email = event.target[1].value
+  handleClick = () => {
+    const nombre = this.nombre.current.value
+    const email = this.email.current.value
 
     // Manejo de datos
     this.props.onSend({ nombre, email })
@@ -21,19 +22,21 @@ class InputNoControlado extends Component {
 
   render () {
     return (
-      <form onSubmit={ this.handleSubmit }>
+      <div>
         <input 
           type="text" 
+          ref={ this.nombre }
           placeholder="Nombre"
         />
         <input 
           type="text"
+          ref={ this.email }
           placeholder="Email"  
         />
-        <button>
+        <button onClick={ this.handleClick }>
           Enviar
         </button>
-      </form>
+      </div>
     )
   }
 }
