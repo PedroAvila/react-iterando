@@ -11,7 +11,7 @@ class InputControlado extends Component {
 
   actualizar = (event) => {
     const text = event.target.value
-    //const tieneError = text !== "" && text.length < 5
+    const tieneError = text !== "" && text.length < 5
     let color = "green"
 
     if (text.trim() === "") {
@@ -23,10 +23,6 @@ class InputControlado extends Component {
     }
 
     this.setState({ text, color })
-
-    // Propagando datos al padre
-    this.props.onChange(this.props.name, text)
-
   }
 
   render() {
@@ -43,7 +39,6 @@ class InputControlado extends Component {
         value={this.state.text}
         onChange={this.actualizar}
         style={ styles }
-        placeholder={ this.props.placeholder }
       />
     )
   }
@@ -51,16 +46,6 @@ class InputControlado extends Component {
 
 class App extends Component {
 
-  state={
-    name: "",
-    email: ""
-  }
-
-  actualizar = (name, text) => {
-    this.setState({
-      [name]: text
-    })
-  }
 
   render() {
 
@@ -69,22 +54,7 @@ class App extends Component {
         <h1>
           Inputs Controlados 🦄
         </h1>
-        <InputControlado 
-          onChange={ this.actualizar }
-          name="name"
-          placeholder="Nombre Completo"
-        />
-        <InputControlado 
-          onChange={ this.actualizar }
-          name="email"
-          placeholder="Tu Email"
-        />
-        <h2>
-          Nombre: { this.state.name }
-        </h2>
-        <h2>
-          Email: { this.state.email }
-        </h2>
+        <InputControlado />
       </div>
     )
   }
