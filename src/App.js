@@ -5,42 +5,49 @@ import React, { Component } from 'react'
 class App extends Component {
 
   state = {
-    users: [],
-    cargando: true
+    movie: {}
   }
 
-  componentDidMount(){
-    fetch("https://jsonplaceholder.typicode.com/users")
+  handleSumit = (event) => {
+    event.preventDefault()
+    const title = event.target[0].value
+
+    const url = "http://www.omdbapi.com/?i=tt3896198&apikey=99983c30"
+    
+    fetch(url + "&t=" + title)
     .then(res => res.json())
-    .then(users => this.setState({ users, cargando: false }))
-    .catch(error=> {
-      // Manejo del error
-      
-    })
+    .then(movie => this.setState({ movie }))
   }
-
 
   render() {
 
-    if (this.state.cargando) {
-      return <h1>Cargando...</h1>
-    }
+    const { movie } = this.state
 
     return (
       <div>
-        <h1>Petición HTTP</h1>
-        <h2>{ this.state.text }</h2>
-        <ul>
-          { this.state.users.map(user =>(
-            <li key={ user.id }>
-              { user.name }
-              <a href={ `https://${ user.website }` }>
-                Website
-              </a>
-            </li>
-          ))}
-        </ul>
-
+        
+        <form onSubmit={ this.handleSumit }>
+          <input 
+            type="text"
+            placeholder="Nombre de Pelicula" 
+          />
+          <button>
+            Buscar
+          </button>
+        </form>
+        <div>
+          <h1>{ movie.Title }</h1>
+          <p>
+            { movie.Plot }
+          </p>
+          <img 
+            src={ movie.Poster } 
+            alt="Poster" 
+            style={{
+              width: "150px"
+            }}
+          />
+        </div>
       </div>
     )
   }
