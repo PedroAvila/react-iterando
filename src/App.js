@@ -10,7 +10,7 @@ class App extends Component {
     isFetching: false 
   }
 
-  handleSubmit = (event) => {
+  handleSubmit = async (event) => {
     event.preventDefault()
 
     this.setState({ isFetching: true })
@@ -19,15 +19,14 @@ class App extends Component {
 
     const url = "http://www.omdbapi.com/?i=tt3896198&apikey=99983c30"
 
-    axios.get(url, {
-      params: {
-        t: title
-      }
+    const res = await fetch(url + "&t=" + title)
+    const movie = await res.json()
+      
+    
+    this.setState({
+      movie,
+      isFetching: false
     })
-    .then(res => this.setState({
-       movie: res.data, 
-       isFetching: false 
-      }))
   }
 
   render() {
