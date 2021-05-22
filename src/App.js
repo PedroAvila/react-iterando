@@ -1,75 +1,79 @@
 
 import React, { Component } from 'react'
 
-class Http extends Component {
+class UserDetails extends Component {
 
   state = {
-    photos: []
-  }
-
-  componentDidMount(){
-    fetch("https://jsonplaceholder.typicode.com/photos")
-    .then(res => res.json())
-    .then(photos => this.setState({ photos }))
-  }
-
-  render(){
-
-    const { photos } = this.state
-
-    return(
-      <div>
-        { photos.map(photo => (
-          <img 
-            key={ photo.id }
-            src={ photo.thumbnailUrl }
-            alt={ photo.title }
-          />
-        )) }
-      </div>
-    )
-  }
-}
-
-class Events extends Component {
-
-  state = {
-    width: window.innerWidth
+    user: {},
+    isFetching: false
   }
 
   componentDidMount() {
-    window.addEventListener("resize", this.handlerResize)
+    this.fetchData()
   }
 
-  handlerResize = () => {
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.userId !== this.props.userId) {
+      this.fetchData()
+    }
+  }
+
+  fetchData = () => {
     this.setState({ 
-      width: window.innerWidth
+      isFetching: true
      })
+    const url = "https://jsonplaceholder.typicode.com/users/" + this.props.userId
+    fetch(url)
+    .then(res => res.json())
+    .then(user => this.setState({ 
+      user,
+      isFetching: false 
+    }))
   }
 
-  render() {
+  render(){
     return(
       <div>
-        <h2>Events { this.state.width }</h2>
+        <h2>User Details</h2>
+        { this.state.isFetching
+          ? <h1>Cargando...</h1>
+          : (
+            <pre>
+          { JSON.stringify(this.state.user, null, 4) }
+        </pre>
+          )
+        }
       </div>
     )
   }
 }
 
+
 class App extends Component {
 
-  componentDidMount(){
-    // Solicitudes HTTP
-    // Agregar Event Listeners
+  state = {
+    id: 1
   }
 
-
+  aumentar = () => {
+    this.setState(state => ({
+      id: state.id + 1
+    }))
+  }
+  
   render() {
+    const { id } = this.state
 
     return (
       <div>
-        <h1>componentDidMount</h1>
-        <Events />
+        <h1>componentDitUpdate</h1>
+        <h2>ID: { id }</h2>
+        <button onClick={ this.aumentar }>
+          Aumentar
+        </button>
+        <UserDetails 
+          userId={ id }
+        />
       </div>
     )
   }
