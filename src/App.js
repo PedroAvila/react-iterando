@@ -1,67 +1,57 @@
 
 import React, { Component } from 'react'
-import axios from 'axios'
 
 
-class App extends Component {
+class Contador extends Component {
+
+  /* constructor(props) {
+    super(props)
+
+    this.agregar = this.agregar.bind(this)
+  
+  } */
 
   state = {
-    movie: {},
-    isFetching: false 
+    num: this.props.num
   }
 
-  handleSubmit = async (event) => {
-    event.preventDefault()
-
-    this.setState({ isFetching: true })
-
-    const title = event.target[0].value
-
-    const url = "http://www.omdbapi.com/?i=tt3896198&apikey=99983c30"
-
-    const res = await fetch(url + "&t=" + title)
-    const movie = await res.json()
-      
-    
-    this.setState({
-      movie,
-      isFetching: false
-    })
+  title = React.createRef()
+  
+  agregar = () => {
+    this.setState(state => ({
+      num: state.num + 1
+    }))
   }
 
   render() {
 
-    const { movie, isFetching } = this.state
+    return (
+      <div>
+        <h2
+          ref={ this.title }
+        >
+          { this.state.message }
+        </h2>
+        <button onClick={ this.agregar }>
+          Click ({ this.state.num })
+        </button>
+      </div>
+    )
+  }
+}
+
+
+class App extends Component {
+
+  
+
+  render() {
 
     return (
       <div>
-        <form onSubmit={ this.handleSubmit }>
-          <input 
-            type="text"
-            placeholder="Nombre de Pelicula" 
-          />
-          <button>
-            Buscar
-          </button>
-        </form>
-          { isFetching && (
-            <h2>Cargando...</h2>
-          ) }
-          { movie.Title && !isFetching && (
-            <div>
-            <h1>{ movie.Title }</h1>
-            <p>
-              { movie.Plot }
-            </p>
-            <img 
-              src={ movie.Poster } 
-              alt="Poster" 
-              style={{
-                width: "150px"
-              }}
-            />
-          </div>
-        ) }
+        <h1>Métodos constructor</h1>
+        <Contador num={ 1200 } />
+        <Contador num={ 20 } />
       </div>
     )
   }
