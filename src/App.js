@@ -1,79 +1,42 @@
 
 import React, { Component } from 'react'
 
-class UserDetails extends Component {
-
-  state = {
-    user: {},
-    isFetching: false
-  }
-
-  componentDidMount() {
-    this.fetchData()
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.userId !== this.props.userId) {
-      this.fetchData()
-    }
-  }
-
-  fetchData = () => {
-    this.setState({ 
-      isFetching: true
-     })
-    const url = "https://jsonplaceholder.typicode.com/users/" + this.props.userId
-    fetch(url)
-    .then(res => res.json())
-    .then(user => this.setState({ 
-      user,
-      isFetching: false 
-    }))
-  }
-
-  render(){
-    return(
-      <div>
-        <h2>User Details</h2>
-        { this.state.isFetching
-          ? <h1>Cargando...</h1>
-          : (
-            <pre>
-          { JSON.stringify(this.state.user, null, 4) }
-        </pre>
-          )
-        }
-      </div>
-    )
-  }
-}
-
 
 class App extends Component {
 
+  title = React.createRef()
+
   state = {
-    id: 1
+    text: "Hola"
   }
 
-  aumentar = () => {
-    this.setState(state => ({
-      id: state.id + 1
-    }))
+  getSnapshotBeforeUpdate (prevProps, prevState) {
+    console.log(this.title.current.innerText)
+    return null
   }
-  
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    console.log(this.title.current.innerText)
+    console.log(snapshot)
+  }
+
+  dispatch = () => {
+    this.setState({
+      text: "Adios Bye!"
+    })
+  }
+
   render() {
-    const { id } = this.state
 
     return (
       <div>
-        <h1>componentDitUpdate</h1>
-        <h2>ID: { id }</h2>
-        <button onClick={ this.aumentar }>
-          Aumentar
+        <h3>getSnapShotBeforeUpdate</h3>
+        <h2 ref={ this.title }>
+          { this.state.text }
+        </h2>
+        <button onClick={ this.dispatch }>
+          DISPATCH
         </button>
-        <UserDetails 
-          userId={ id }
-        />
       </div>
     )
   }
