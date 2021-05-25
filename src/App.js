@@ -1,37 +1,61 @@
 
-import React, { Component, PureComponent } from 'react'
+import React, { Component } from 'react'
 
-const itemStyle = {
-  padding: "1em",
-  borderBotton: "1px solid #CCC",
-  marginTop: "0.4em"
-}
+class Timer extends Component {
 
-class Item extends PureComponent {
-
-  handleClick = () => {
-    this.props.onRemove(this.props.item)
+  state = {
+    time: 0,
+    isPlaying: true
   }
 
-  /* shouldComponentUpdate(nextProps, nextState){
-    if (nextProps.item.id !== this.props.item.id) {
-      return true
+  tick = null
+
+  componentDidMount() {
+    this.play()
+  }
+
+  componentWillUnmount() {
+    // Limpiar intervals
+    // Limpiar event listeners
+    // Ejecutar algún método para que limpie algo dentro del padre
+    this.props.onDestoy()
+    clearInterval(this.tick)
+  }
+
+  play = () => {
+
+    this.setState({ isPlaying: true })
+
+    this.tick = setInterval(() => {
+      this.setState(state=> ({
+        time: state.time + 1
+      }))
+    }, 1000);
+  }
+
+  pause = () => {
+    this.setState({ isPlaying: false })
+    clearInterval(this.tick)
+  }
+
+  toggle = () => {
+    if (this.state.isPlaying) {
+      this.pause()
+    } else {
+      this.play()
     }
-    return false
-  } */
+  }
 
   render() {
-    const { item } = this.props
 
-    console.log("Render 🔥 " + item.text)
+    const { time, isPlaying } = this.state
+
     return(
-      <div style={ itemStyle }>
-        <button onClick={ this.handleClick }>
-          x
+      <div>
+        <h1>{ time }</h1>
+        <button onClick={ this.toggle }>
+          { isPlaying ? "pause" : "play" }
         </button>
-        <span>
-        { item.text }
-        </span>
       </div>
     )
   }
@@ -40,51 +64,30 @@ class Item extends PureComponent {
 class App extends Component {
 
   state = {
-    list: []
-  }
-  
-  agregar = (e) => {
-    e.preventDefault()
-    const text = e.target[0].value
-    const id = Math.random().toString(16)
-    const pendiente = { text, id }
-    this.setState(state=>({
-      list: [
-        ...state.list,
-        pendiente 
-      ]
-    }))
-    e.target[0].value = ""
+    mostrar: true,
+    message: ""
   }
 
-  eliminar = (item) => {
-    this.setState(state=> ({
-      list: state.list.filter(_item => {
-        return item.id !== _item.id
-      })
-    }))
+  desmontar = () => {
+    this.setState({ mostrar: false })
+  } 
+
+  handlerDestoy = () => {
+    this.setState({
+      message: "El componente contador fue destruido"
+    })
+     
   }
 
   render() {
     
     return (
       <div>
-        <h3>shouldComponentUpdate</h3>
-        <form onSubmit={ this.agregar }>
-          <input type="text" placeholder="Ingresa tu pendiente" />
-          <button>
-            Agregar
-          </button>
-        </form>
-        <div>
-          { this.state.list.map(item => (
-            <Item 
-              key={ item.id }
-              item={ item }
-              onRemove={ this.eliminar }
-            />
-          )) }
-        </div>
+        <h3>{ this.state.message }</h3>
+        <button onClick={ this.desmontar }>
+          Desmontar
+        </button>
+        { this.state.mostrar && <Timer onDestoy={ this.handlerDestoy } /> }
       </div>
     )
   }
