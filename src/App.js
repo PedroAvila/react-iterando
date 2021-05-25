@@ -2,6 +2,10 @@
 import React, { Component } from 'react'
 import PubSub from 'pubsub-js'
 
+// { Provider, Consumer }
+const { Provider, Consumer } = React.createContext()
+
+
 const Header = () => {
   const subtitleStyles = {
     fontWeight: "bold"
@@ -21,7 +25,7 @@ const Header = () => {
         (Cualquiera)
       </div>
       <div style={ subtitleStyles }>
-        Observer Pattern
+        React API Context
         <span role="img" aria="flame">
           🔥 
         </span>
@@ -38,96 +42,59 @@ const boxStyle = {
   textAlign: "center"
 }
 
-/* const blueStyle = {
-  ...boxStyle,
-  border: "1px solid blue"
-}
-
-const redStyle = {
-  ...boxStyle,
-  border: "1px solid red"
-} */
+const Nieto = () => (
+  <Consumer>
+    { ( { addClicks, clicks })=> (
+      <div style={boxStyle}>
+        <p>Nieto</p>
+        <button onClick={addClicks}>
+          Disparar ({clicks})
+            </button>
+      </div>
+    )}
+  </Consumer>
+)
 
 class Hijo extends Component {
   render() {
     return(
       <div style={ boxStyle }>
-        <Nieto onDispatch={ this.props.onDispatch } />
+        <p>Hijo</p>
+        <Nieto />
       </div>
     )
   }
 }
 
-class Bisnieto extends Component {
 
-  state = {
-    message: "✡ ✡ ✡ "
-  }
 
-  componentDidMount() {
-    PubSub.subscribe("otro evento", (e, data)=>{
-      this.setState({
-        message: data.title
-      })
-    })
-  }
-
-  componentWillUnmount(){
-    PubSub.unsubscribe("otro evento")
-  }
-
-  handleClick = () => {
-    PubSub.publish("saludo", "Hola desde el Bisnieto")
-  }
-
-  render() {
-    return(
-      <div style={ boxStyle }>
-        <p>{ this.state.message }</p>
-        <button onClick={ this.handleClick }>
-          NIETO
-        </button>
-      </div>
-    )
-  }
-}
-
-class Nieto extends Component {
-  render() {
-    return(
-      <div style={ boxStyle }>
-        <Bisnieto onDispatch={ this.props.onDispatch } />
-      </div>
-    )
-  }
-}
 
 
 
 class App extends Component {
 
-  componentDidMount() {
-    PubSub.subscribe("saludo", (e, data)=>{
-      alert(data)
-    })
+  state = {
+    clicks: 0 
   }
 
-  handleClick = () => {
-    PubSub.publish("otro evento", {
-      title: "Hola desde <App />"
-    })
+  addClicks = () => {
+    this.setState(state=> ({
+      clicks: state.clicks + 1
+    }))
   }
 
   render() {
 
     return (
-      <div style={ boxStyle }>
-        <button onClick={ this.handleClick }>
-          PADRE
-        </button>
-        <Header />
-        <Hijo onDispatch={ this.handleClick } />
-      </div>
+      <Provider value={{ 
+        clicks: this.state.clicks,
+        addClicks: this.addClicks
+       }}>
+        <div style={ boxStyle }>
+          <Header />
+          <Hijo />
+        </div>
+      </Provider>
     )
   }
 }
