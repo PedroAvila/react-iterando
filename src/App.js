@@ -1,5 +1,5 @@
 
-import React, { Component } from 'react'
+import React, { Component, PureComponent } from 'react'
 
 const itemStyle = {
   padding: "1em",
@@ -7,18 +7,18 @@ const itemStyle = {
   marginTop: "0.4em"
 }
 
-class Item extends Component {
+class Item extends PureComponent {
 
   handleClick = () => {
     this.props.onRemove(this.props.item)
   }
 
-  shouldComponentUpdate(nextProps, nextState){
+  /* shouldComponentUpdate(nextProps, nextState){
     if (nextProps.item.id !== this.props.item.id) {
       return true
     }
     return false
-  }
+  } */
 
   render() {
     const { item } = this.props
