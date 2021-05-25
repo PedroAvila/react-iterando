@@ -1,60 +1,51 @@
 
 import React, { Component } from 'react'
 
-class Timer extends Component {
+const Header = () => {
+  const subtitleStyles = {
+    fontWeight: "bold"
+  }
+  const headerStyle = {
+    margin: "0.6em",
+    borderRadius: "0.3em",
+    border: "1px solid #d2d2d2",
+    padding: "2em 0.4em",
+    fontFamily: "monospace",
+    fontSize: "17px"
+  }
+
+  return(
+    <header style={ headerStyle }>
+      <div>
+        Comunicación entre componentes
+      </div>
+      <div style={ subtitleStyles }>
+        Métodos de instancia
+        <span role="image" aria="flame">
+          🔥 
+        </span>
+      </div>
+    </header>
+  )
+}
+
+class Hijo extends Component {
 
   state = {
-    time: 0,
-    isPlaying: true
+    message: "☪ ✡ ✡ ✡ " 
   }
 
-  tick = null
-
-  componentDidMount() {
-    this.play()
-  }
-
-  componentWillUnmount() {
-    // Limpiar intervals
-    // Limpiar event listeners
-    // Ejecutar algún método para que limpie algo dentro del padre
-    this.props.onDestoy()
-    clearInterval(this.tick)
-  }
-
-  play = () => {
-
-    this.setState({ isPlaying: true })
-
-    this.tick = setInterval(() => {
-      this.setState(state=> ({
-        time: state.time + 1
-      }))
-    }, 1000);
-  }
-
-  pause = () => {
-    this.setState({ isPlaying: false })
-    clearInterval(this.tick)
-  }
-
-  toggle = () => {
-    if (this.state.isPlaying) {
-      this.pause()
-    } else {
-      this.play()
-    }
+  dispatchAlert = (e, message="Alert desde el hijo") => {
+    alert(message)
+    this.setState({ message })
   }
 
   render() {
-
-    const { time, isPlaying } = this.state
-
     return(
       <div>
-        <h1>{ time }</h1>
-        <button onClick={ this.toggle }>
-          { isPlaying ? "pause" : "play" }
+        <h2>{ this.state.message }</h2>
+        <button onClick={ this.dispatchAlert }>
+          Hijo
         </button>
       </div>
     )
@@ -63,31 +54,21 @@ class Timer extends Component {
 
 class App extends Component {
 
-  state = {
-    mostrar: true,
-    message: ""
-  }
+  hijo = React.createRef()
 
-  desmontar = () => {
-    this.setState({ mostrar: false })
-  } 
-
-  handlerDestoy = () => {
-    this.setState({
-      message: "El componente contador fue destruido"
-    })
-     
+  handleClick = () => {
+    this.hijo.current.dispatchAlert(null, "Hola desde el padre")
   }
 
   render() {
     
     return (
       <div>
-        <h3>{ this.state.message }</h3>
-        <button onClick={ this.desmontar }>
-          Desmontar
+        <Header />
+        <Hijo ref={ this.hijo } />
+        <button onClick={ this.handleClick }>
+          Padre
         </button>
-        { this.state.mostrar && <Timer onDestoy={ this.handlerDestoy } /> }
       </div>
     )
   }
