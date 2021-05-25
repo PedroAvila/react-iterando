@@ -17,11 +17,11 @@ const Header = () => {
   return(
     <header style={ headerStyle }>
       <div>
-        (Hijo a Padre)
+        (Hermanos)
       </div>
       <div style={ subtitleStyles }>
-        Event Bubbling
-        <span role="image" aria="flame">
+        Parent Component
+        <span role="img" aria="flame">
           🔥 
         </span>
       </div>
@@ -37,24 +37,60 @@ const boxStyle = {
   textAlign: "center"
 }
 
-class Hijo extends Component {
+const blueStyle = {
+  ...boxStyle,
+  border: "1px solid blue"
+}
 
-  handleClick = (e) => {
-    //e.stopPropagation()
-    e.saludo = "Hola mensaje desde el hijo"
-    console.log("Click en <Hijo />")
-  }
+const redStyle = {
+  ...boxStyle,
+  border: "1px solid red"
+}
 
+class ComponentA extends Component {
   render() {
+    const { num } = this.props
     return(
-      <div style={ boxStyle }>
-        <p>Hijo</p>
+      <div style={ blueStyle }> 
+        <button onClick={ this.props.onAdd }>
+          Component A ({ num })
+        </button>
       </div>
     )
   }
 } 
 
+class ComponentB extends Component {
+  render() {
+    const { num } = this.props
+    return(
+      <div style={ redStyle }> 
+        <button onClick={ this.props.onAdd }>
+          Component B ({ num })
+        </button>
+      </div>
+    )
+  }
+}
+
 class App extends Component {
+
+  state = {
+    countA: 0,
+    countB: 0
+  }
+
+  handleAddA = () => {
+    this.setState(state =>({
+      countA: state.countA + 1
+    }))
+  }
+
+  handleAddB = () => {
+    this.setState(state =>({
+      countB: state.countB + 2
+    }))
+  }
 
   handleClick = (e) => {
     console.log("Click en <Padre /> ", e.saludo)
@@ -62,13 +98,21 @@ class App extends Component {
 
   render() {
     
+    const { countA, countB } = this.state
+
     return (
       <div 
         style={ boxStyle }
-        onClick={ this.handleClick }
       >
         <Header />
-        <Hijo />
+        <ComponentA 
+          num={ countA }
+          onAdd={ this.handleAddB }
+        />
+        <ComponentB 
+          num={ countB }
+          onAdd={ this.handleAddA }
+        />
       </div>
     )
   }
