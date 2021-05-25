@@ -17,10 +17,10 @@ const Header = () => {
   return(
     <header style={ headerStyle }>
       <div>
-        (Hijo a Padre)
+        Comunicación entre componentes
       </div>
       <div style={ subtitleStyles }>
-        Event Bubbling
+        Métodos de instancia
         <span role="image" aria="flame">
           🔥 
         </span>
@@ -29,46 +29,46 @@ const Header = () => {
   )
 }
 
-const boxStyle = {
-  padding: "0.5em",
-  margin: "0.5em",
-  border: "1px solid gray",
-  borderRadius: "0.3em",
-  textAlign: "center"
-}
-
 class Hijo extends Component {
 
-  handleClick = (e) => {
-    //e.stopPropagation()
-    e.saludo = "Hola mensaje desde el hijo"
-    console.log("Click en <Hijo />")
+  state = {
+    message: "☪ ✡ ✡ ✡ " 
+  }
+
+  dispatchAlert = (e, message="Alert desde el hijo") => {
+    alert(message)
+    this.setState({ message })
   }
 
   render() {
     return(
-      <div style={ boxStyle }>
-        <p>Hijo</p>
+      <div>
+        <h2>{ this.state.message }</h2>
+        <button onClick={ this.dispatchAlert }>
+          Hijo
+        </button>
       </div>
     )
   }
-} 
+}
 
 class App extends Component {
 
-  handleClick = (e) => {
-    console.log("Click en <Padre /> ", e.saludo)
+  hijo = React.createRef()
+
+  handleClick = () => {
+    this.hijo.current.dispatchAlert(null, "Hola desde el padre")
   }
 
   render() {
     
     return (
-      <div 
-        style={ boxStyle }
-        onClick={ this.handleClick }
-      >
+      <div>
         <Header />
-        <Hijo />
+        <Hijo ref={ this.hijo } />
+        <button onClick={ this.handleClick }>
+          Padre
+        </button>
       </div>
     )
   }
