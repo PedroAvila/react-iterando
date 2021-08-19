@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import propTypes from 'prop-types';
+import React, { Component } from 'react'
 
 const Header = () => {
     const subtitleStyles = {
@@ -17,10 +16,10 @@ const Header = () => {
       return(
         <header style={ headerStyle }>
           <div>
-            ( Cualquiera )
+            ( Hijo - Padre )
           </div>
           <div style={ subtitleStyles }>
-            Variables Globales
+            HOC High Order Component
             <span role="img" aria="flame">
               🔥 
             </span>
@@ -37,66 +36,45 @@ const boxStyles = {
     textAlign: "center"
 }
 
-class Resize extends Component {
+// HOC
+const withCounter = (Com) => {
+    return class extends Component {
 
-    static propTypes = {
-        render: propTypes.func.isRequired
-    }
+        state = {
+            num: 0
+        }
 
-    state = {
-        width: window.innerWidth,
-        height: window.innerHeight
-    }
+        add = () => {
+            this.setState(state => ({
+                num: state.num + 1
+            }))
+        }
 
-    componentDidMount(){
-        window.addEventListener('resize', this.handleResize)
-    }
-
-    componentWillMount() {
-        window.removeEventListener( 'resize', this.handleResize )
-    }
-
-    handleResize = () => {
-        this.setState({
-            width: window.innerWidth,
-            height: window.innerHeight
-        })
-    }
-
-    render() {
-        const { width, height } = this.state
-        const { render } = this.props 
-
-        return render ({ width, height })
+        render () {
+            return (
+                <Com 
+                    num={this.state.num}
+                    add={this.add}
+                />
+            )
+        }
     }
 }
 
-
-
 class App extends Component {
-
     render() {
-        
+        const { num, add } = this.props
+        console.log(this.props)
         return (
-            <div style={ boxStyles }>
+            <div style = { boxStyles }>
                 <Header />
-                <Resize
-                    render = {( { width, height } ) => {
-                        return (
-                            <div>
-                                <h1>Width: { width }</h1>
-                                <li>{ height }</li>
-                            </div>
-                        )
-                    }} 
-                />
+                <h1>{ num }</h1>
+                <button onClick={ add }>
+                    ADD
+                </button>
             </div>
         )
     }
 }
 
-export default App;
-
-
-
-
+export default withCounter(App) 
