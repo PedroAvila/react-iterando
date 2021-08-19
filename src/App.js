@@ -38,15 +38,15 @@ const boxStyles = {
 
 // HOC
 const withCounter = (Com) => {
-    return class extends Component {
+    return ( config ) => class extends Component {
 
         state = {
-            num: 0
+            num: config.clicks
         }
 
         add = () => {
             this.setState(state => ({
-                num: state.num + 1
+                num: state.num + config.sumClicks
             }))
         }
 
@@ -77,4 +77,13 @@ class App extends Component {
     }
 }
 
-export default withCounter(App) 
+// export default withCounter(App, {
+//     clicks: 10,
+//     sumClicks: 3
+// })
+
+export default withCounter(App)({
+    clicks: 5,
+    sumClicks: 5
+})
+ 
