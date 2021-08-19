@@ -1,5 +1,5 @@
-
 import React, { Component } from 'react';
+import propTypes from 'prop-types';
 
 const Header = () => {
     const subtitleStyles = {
@@ -17,10 +17,10 @@ const Header = () => {
       return(
         <header style={ headerStyle }>
           <div>
-            (Hijo a Padre)
+            ( Cualquiera )
           </div>
           <div style={ subtitleStyles }>
-            Render Props
+            Variables Globales
             <span role="img" aria="flame">
               🔥 
             </span>
@@ -37,52 +37,58 @@ const boxStyles = {
     textAlign: "center"
 }
 
-class List extends Component {
-    render () {
-        const { list, render } = this.props
+class Resize extends Component {
 
-        return (
-            <div>
-                { list.map( (item, index) => {
-
-                    if( render ) {
-                        return render( item, index )
-                    }
-
-                    return (
-                        <li key={ item.name }>
-                            { item.name }
-                        </li>
-                    )
-                } ) }
-            </div>
-        )
+    static propTypes = {
+        render: propTypes.func.isRequired
     }
-}
-
-class App extends Component {
 
     state = {
-        fruits: [
-            { name: 'Fresa', price: 22 },
-            { name: 'Mango', price: 18 },
-            { name: 'Sandia', price: 24 },
-            { name: 'Manzana', price: 12 }
-        ]
+        width: window.innerWidth,
+        height: window.innerHeight
+    }
+
+    componentDidMount(){
+        window.addEventListener('resize', this.handleResize)
+    }
+
+    componentWillMount() {
+        window.removeEventListener( 'resize', this.handleResize )
+    }
+
+    handleResize = () => {
+        this.setState({
+            width: window.innerWidth,
+            height: window.innerHeight
+        })
     }
 
     render() {
-        const { fruits } = this.state
+        const { width, height } = this.state
+        const { render } = this.props 
+
+        return render ({ width, height })
+    }
+}
+
+
+
+class App extends Component {
+
+    render() {
+        
         return (
             <div style={ boxStyles }>
                 <Header />
-                <List
-                    list={ fruits } 
-                    render= { ( data, index ) => (
-                        <div>
-                            { data.name } - ${ data.price }
-                        </div>
-                    ) }
+                <Resize
+                    render = {( { width, height } ) => {
+                        return (
+                            <div>
+                                <h1>Width: { width }</h1>
+                                <li>{ height }</li>
+                            </div>
+                        )
+                    }} 
                 />
             </div>
         )
