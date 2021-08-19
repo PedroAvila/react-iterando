@@ -36,55 +36,54 @@ const boxStyles = {
     textAlign: "center"
 }
 
-const withSizes = (Comp) => class extends Component {
+// HOC
+const withCounter = (Com) => {
+    return ( config ) => class extends Component {
 
-    state = {
-        width: window.innerWidth,
-        height: window.innerHeight
+        state = {
+            num: config.clicks
+        }
+
+        add = () => {
+            this.setState(state => ({
+                num: state.num + config.sumClicks
+            }))
+        }
+
+        render () {
+            return (
+                <Com 
+                    num={this.state.num}
+                    add={this.add}
+                />
+            )
+        }
     }
-
-    componentDidMount() {
-        window.addEventListener('resize', this.handleResize)
-    }
-
-    componentWillMount () {
-        window.removeEventListener('resize', this.handleResize)
-    }
-
-    handleResize = () => {
-        this.setState({
-            width: window.innerWidth,
-            height: window.innerHeight
-        })
-    }
-
-    render () {
-        const {  width, height } = this.state
-
-        return (
-            <Comp 
-                width= { width }
-                height= { height }
-            />
-        )
-    }
-
 }
 
 class App extends Component {
-    render () {
-        const { width, height } = this.props
-
+    render() {
+        const { num, add } = this.props
+        console.log(this.props)
         return (
-            <div style={ boxStyles }>
+            <div style = { boxStyles }>
                 <Header />
-
-                <h1>
-                    { width } - { height }
-                </h1>
+                <h1>{ num }</h1>
+                <button onClick={ add }>
+                    ADD
+                </button>
             </div>
         )
     }
 }
 
-export default withSizes(App) 
+// export default withCounter(App, {
+//     clicks: 10,
+//     sumClicks: 3
+// })
+
+export default withCounter(App)({
+    clicks: 5,
+    sumClicks: 5
+})
+ 
