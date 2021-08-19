@@ -1,102 +1,96 @@
 
-import React, { Component } from 'react'
-import PubSub from 'pubsub-js'
-
-// { Provider, Consumer }
-const { Provider, Consumer } = React.createContext()
-
+import React, { Component } from 'react';
 
 const Header = () => {
-  const subtitleStyles = {
-    fontWeight: "bold"
-  }
-  const headerStyle = {
-    margin: "0.6em",
+    const subtitleStyles = {
+        fontWeight: "bold"
+      }
+      const headerStyle = {
+        margin: "0.6em",
+        borderRadius: "0.3em",
+        border: "1px solid #d2d2d2",
+        padding: "2em 0.4em",
+        fontFamily: "monospace",
+        fontSize: "17px"
+      }
+
+      return(
+        <header style={ headerStyle }>
+          <div>
+            (Hijo a Padre)
+          </div>
+          <div style={ subtitleStyles }>
+            Render Props
+            <span role="img" aria="flame">
+              🔥 
+            </span>
+          </div>
+        </header>
+      )
+}
+
+const boxStyles = {
+    padding: "0.5em",
+    margin: "0.5em",
+    border: "1px solid gray",
     borderRadius: "0.3em",
-    border: "1px solid #d2d2d2",
-    padding: "2em 0.4em",
-    fontFamily: "monospace",
-    fontSize: "17px"
-  }
-
-  return(
-    <header style={ headerStyle }>
-      <div>
-        (Cualquiera)
-      </div>
-      <div style={ subtitleStyles }>
-        React API Context
-        <span role="img" aria="flame">
-          🔥 
-        </span>
-      </div>
-    </header>
-  )
+    textAlign: "center"
 }
 
-const boxStyle = {
-  padding: "0.5em",
-  margin: "0.5em",
-  border: "1px solid gray",
-  borderRadius: "0.3em",
-  textAlign: "center"
+class List extends Component {
+    render () {
+        const { list, render } = this.props
+
+        return (
+            <div>
+                { list.map( (item, index) => {
+
+                    if( render ) {
+                        return render( item, index )
+                    }
+
+                    return (
+                        <li key={ item.name }>
+                            { item.name }
+                        </li>
+                    )
+                } ) }
+            </div>
+        )
+    }
 }
-
-const Nieto = () => (
-  <Consumer>
-    { ( { addClicks, clicks })=> (
-      <div style={boxStyle}>
-        <p>Nieto</p>
-        <button onClick={addClicks}>
-          Disparar ({clicks})
-            </button>
-      </div>
-    )}
-  </Consumer>
-)
-
-class Hijo extends Component {
-  render() {
-    return(
-      <div style={ boxStyle }>
-        <p>Hijo</p>
-        <Nieto />
-      </div>
-    )
-  }
-}
-
-
-
-
-
 
 class App extends Component {
 
-  state = {
-    clicks: 0 
-  }
+    state = {
+        fruits: [
+            { name: 'Fresa', price: 22 },
+            { name: 'Mango', price: 18 },
+            { name: 'Sandia', price: 24 },
+            { name: 'Manzana', price: 12 }
+        ]
+    }
 
-  addClicks = () => {
-    this.setState(state=> ({
-      clicks: state.clicks + 1
-    }))
-  }
-
-  render() {
-
-    return (
-      <Provider value={{ 
-        clicks: this.state.clicks,
-        addClicks: this.addClicks
-       }}>
-        <div style={ boxStyle }>
-          <Header />
-          <Hijo />
-        </div>
-      </Provider>
-    )
-  }
+    render() {
+        const { fruits } = this.state
+        return (
+            <div style={ boxStyles }>
+                <Header />
+                <List
+                    list={ fruits } 
+                    render= { ( data, index ) => (
+                        <div>
+                            { data.name } - ${ data.price }
+                        </div>
+                    ) }
+                />
+            </div>
+        )
+    }
 }
 
 export default App;
+
+
+
+
